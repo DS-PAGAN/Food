@@ -78,14 +78,22 @@ window.addEventListener("DOMContentLoaded", function () {
 
   // Timer
 
-  const deadLine = "2025-12-1";
+  const deadLine = "2025-10-1";
 
   function getTimeRemaining(endtime) {
-    const t = Date.parse(endtime) - Date.parse(new Date()),
-      days = Math.floor(t / (1000 * 60 * 60 * 24)),
-      hours = Math.floor(((t / 1000) * 60 * 60) % 24),
-      minutes = Math.floor((t / 1000 / 60) % 60),
-      seconds = Math.floor((t / 1000) % 60);
+    let days, hours, minutes, seconds;
+    const t = Date.parse(endtime) - Date.parse(new Date());
+    if (t <= 0) {
+      days = 0;
+      hours = 0;
+      minutes = 0;
+      seconds = 0;
+    } else {
+      (days = Math.floor(t / (1000 * 60 * 60 * 24))),
+        (hours = Math.floor(((t / 1000) * 60 * 60) % 24)),
+        (minutes = Math.floor((t / 1000 / 60) % 60)),
+        (seconds = Math.floor((t / 1000) % 60));
+    }
 
     return {
       total: t,
@@ -129,4 +137,57 @@ window.addEventListener("DOMContentLoaded", function () {
   }
 
   setClock(".timer", deadLine);
+
+  // Modal
+
+  const modalTriger = document.querySelectorAll("[data-modal]"),
+    modal = document.querySelector(".modal"),
+    modalCloseBtn = document.querySelector("[data-close]");
+
+  function openModal() {
+    modal.classList.add("show");
+    modal.classList.remove("hide");
+    // modal.classList.toggle("show");
+    document.body.style.overflow = "hidden";
+    clearInterval(modalTimerId);
+  }
+
+  modalTriger.forEach((btn) => {
+    btn.addEventListener("click", openModal);
+  });
+
+  function closeModal() {
+    modal.classList.add("hide");
+    modal.classList.remove("show");
+    // modal.classList.toggle("show");
+    document.body.style.overflow = "";
+  }
+
+  modalCloseBtn.addEventListener("click", closeModal);
+
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) {
+      closeModal();
+    }
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.code === "Escape" && modal.classList.contains("show")) {
+      closeModal();
+    }
+  });
+
+  const modalTimerId = setTimeout(openModal, 5000);
+
+  function showModalByScroll() {
+    if (
+      window.pageYOffset + document.documentElement.clientHeight >=
+      document.documentElement.scrollHeight - 1
+    ) {
+      openModal();
+      window.removeEventListener("scroll", showModalByScroll);
+    }
+  }
+
+  window.addEventListener("scroll", showModalByScroll);
 });

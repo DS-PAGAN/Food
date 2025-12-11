@@ -12,7 +12,7 @@
   },
   "license": "ISC",
   "author": "DS",
-  "type": "commonjs",
+  "type": "module",
   "main": "gulpfile.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
